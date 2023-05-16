@@ -1,19 +1,40 @@
 import 'package:application1/constants/colors.dart';
 import 'package:application1/screen/button.dart';
-import 'package:application1/screen/component.dart';
+//import 'package:application1/screen/component.dart';
 import 'package:application1/screen/home.dart';
 import 'package:application1/screen/tiles.dart';
 import 'package:flutter/material.dart';
 
-class Login extends StatelessWidget {
-  Login({super.key});
+class Login extends StatefulWidget {
+  const Login({super.key});
 
+  @override
+  State<Login> createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
   //text editing controller
   final usernameController = TextEditingController();
   final passwordController = TextEditingController();
 
   //sign user in method
-  void signUserIn() {}
+
+  late GlobalKey<FormState> _formKey; // Declare _formKey as a late variable
+
+  @override
+  void initState() {
+    super.initState();
+    _formKey = GlobalKey<FormState>(); // Initialize _formKey in initState
+  }
+
+  void signUserIn() {
+    if (_formKey.currentState!.validate()) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const Home()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,20 +71,50 @@ class Login extends StatelessWidget {
                     height: 25,
                   ),
                   //uname
-                  MyTextField(
-                    controller: usernameController,
-                    hintText: 'Username',
-                    obscureText: false,
-                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 20, right: 10),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: usernameController,
+                            decoration:
+                                const InputDecoration(labelText: 'Email'),
+                            keyboardType: TextInputType.emailAddress,
+                            onFieldSubmitted: (value) {},
+                            validator: (value) {
+                              if (value!.isEmpty ||
+                                  !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9,!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(value)) {
+                                return 'Enter a valid email!';
+                              }
+                              return null;
+                            },
+                          ),
 
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  //password
-                  MyTextField(
-                    controller: passwordController,
-                    hintText: 'Password',
-                    obscureText: true,
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          //password
+                          Container(
+                            child: TextFormField(
+                              decoration:
+                                  const InputDecoration(labelText: 'Password'),
+                              keyboardType: TextInputType.visiblePassword,
+                              obscureText: true,
+                              onFieldSubmitted: (value) {},
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Enter a valid password!';
+                                }
+                                return null;
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
                   const SizedBox(
@@ -87,14 +138,10 @@ class Login extends StatelessWidget {
                     height: 25,
                   ),
                   //sign in
-
                   GestureDetector(
                     child: Button(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const Home()));
+                        signUserIn();
                       },
                     ),
                   ),
@@ -140,11 +187,11 @@ class Login extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
-                      SquareTile(imagePath: 'assets/apple.png'),
+                      SquareTile(imagePath: 'assets/search.png'),
                       SizedBox(
                         width: 10,
                       ),
-                      SquareTile(imagePath: 'assets/search.png'),
+                      SquareTile(imagePath: 'assets/apple.png'),
                     ],
                   ),
 
