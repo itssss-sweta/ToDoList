@@ -1,5 +1,6 @@
 import 'package:application1/constants/colors.dart';
 import 'package:application1/screen/button.dart';
+import 'package:application1/screen/component.dart';
 //import 'package:application1/screen/component.dart';
 import 'package:application1/screen/home.dart';
 import 'package:application1/screen/tiles.dart';
@@ -24,7 +25,7 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    _formKey = GlobalKey<FormState>(); // Initialize _formKey in initState
+    _formKey = GlobalKey<FormState>();
   }
 
   void signUserIn() {
@@ -71,49 +72,41 @@ class _LoginState extends State<Login> {
                     height: 25,
                   ),
                   //uname
-                  Container(
-                    padding: const EdgeInsets.only(left: 20, right: 10),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            controller: usernameController,
-                            decoration:
-                                const InputDecoration(labelText: 'Email'),
-                            keyboardType: TextInputType.emailAddress,
-                            onFieldSubmitted: (value) {},
-                            validator: (value) {
-                              if (value!.isEmpty ||
-                                  !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9,!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
-                                      .hasMatch(value)) {
-                                return 'Enter a valid email!';
-                              }
-                              return null;
-                            },
-                          ),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        MyTextField(
+                          controller: usernameController,
+                          hintText: 'Username',
+                          obscureText: false,
+                          validator: (value) {
+                            if (value!.isEmpty ||
+                                !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9,!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                    .hasMatch(value)) {
+                              return 'Enter a valid email!';
+                            }
+                            return null;
+                          },
+                        ),
 
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          //password
-                          Container(
-                            child: TextFormField(
-                              decoration:
-                                  const InputDecoration(labelText: 'Password'),
-                              keyboardType: TextInputType.visiblePassword,
-                              obscureText: true,
-                              onFieldSubmitted: (value) {},
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Enter a valid password!';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        //password
+
+                        MyTextField(
+                          hintText: 'Password',
+                          controller: passwordController,
+                          obscureText: true,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Enter a valid password!';
+                            }
+                            return null;
+                          },
+                        ),
+                      ],
                     ),
                   ),
 
@@ -140,9 +133,7 @@ class _LoginState extends State<Login> {
                   //sign in
                   GestureDetector(
                     child: Button(
-                      onTap: () {
-                        signUserIn();
-                      },
+                      onTap: signUserIn,
                     ),
                   ),
 

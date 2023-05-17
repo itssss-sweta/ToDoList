@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_typing_uninitialized_variables
+// ignore_for_file: must_be_immutable, prefer_typing_uninitialized_variables
 
 import 'package:flutter/material.dart';
 
@@ -6,12 +6,14 @@ class MyTextField extends StatelessWidget {
   final controller;
   final String hintText;
   final bool obscureText;
+  String? Function(String?)? validator;
 
-  const MyTextField(
+  MyTextField(
       {super.key,
       required this.controller,
       required this.hintText,
-      required this.obscureText});
+      required this.obscureText,
+      this.validator});
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +21,7 @@ class MyTextField extends StatelessWidget {
       padding: const EdgeInsets.symmetric(
         horizontal: 25.0,
       ),
-      child: TextField(
+      child: TextFormField(
         controller: controller,
         obscureText: obscureText,
         decoration: InputDecoration(
@@ -34,6 +36,7 @@ class MyTextField extends StatelessWidget {
           hintText: hintText,
           hintStyle: TextStyle(color: Colors.grey[500]),
         ),
+        validator: validator != null ? (value) => validator!(value) : null,
       ),
     );
   }
