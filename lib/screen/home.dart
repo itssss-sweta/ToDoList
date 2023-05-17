@@ -1,4 +1,6 @@
+import 'package:application1/screen/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../constants/colors.dart';
 import '../widget/todo_item.dart';
@@ -23,8 +25,8 @@ class _HomeState extends State<Home> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
-            shadowColor: Colors.grey,
-            title: const Text('Add Task ToDo'),
+            shadowColor: Colors.grey[600],
+            title: const Text('Add Task'),
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -90,7 +92,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: tdBGColor,
-      appBar: _buildAppBAr(),
+      appBar: _buildAppBAr(context),
+      drawer: _buildDrawer(context),
       body: Stack(children: [
         Container(
           clipBehavior: Clip.none,
@@ -208,24 +211,206 @@ class _HomeState extends State<Home> {
   }
 }
 
-AppBar _buildAppBAr() {
+AppBar _buildAppBAr(BuildContext context) {
   return AppBar(
     backgroundColor: tdBGColor,
-    elevation: 0,
-    title: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      const Icon(
-        Icons.menu,
-        color: tdBlack,
-        size: 30,
-      ),
-      SizedBox(
-        height: 40,
-        width: 40,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Image.asset('assets/woman.png'),
+    elevation: 1,
+    leading: Builder(
+      builder: (BuildContext context) {
+        return IconButton(
+          padding: const EdgeInsets.only(left: 20),
+          icon: const Icon(Icons.menu),
+          color: tdBlack,
+          onPressed: () {
+            Scaffold.of(context).openDrawer();
+          },
+        );
+      },
+    ),
+    actions: [
+      IconButton(
+        onPressed: () {},
+        icon: const Icon(
+          Icons.notifications,
+          size: 35,
+          color: tdBlack,
         ),
-      )
-    ]),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(right: 20),
+        child: SizedBox(
+          height: 40,
+          width: 40,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Image.asset('assets/woman.png'),
+          ),
+        ),
+      ),
+    ],
+  );
+}
+
+Drawer _buildDrawer(BuildContext context) {
+  return Drawer(
+    backgroundColor: tdBGColor,
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: [
+        const DrawerHeader(
+          padding: EdgeInsets.only(top: 30, left: 20),
+          decoration: BoxDecoration(
+            color: tdRed,
+          ),
+          child: Text(
+            'To-Do-List',
+            style: TextStyle(
+              fontSize: 32,
+            ),
+          ),
+        ),
+        ListTile(
+          title: const Text(
+            'New Task',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          onTap: () {
+            Navigator.pop(context);
+          },
+        ),
+        const Divider(
+          color: tdGrey,
+          thickness: 0.5,
+        ),
+        ListTile(
+          title: const Text(
+            'Logout',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text(
+                    'Are you sure you want to logout?',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
+                          child: const Text(
+                            'Yes',
+                            style: TextStyle(
+                              color: tdBlue,
+                              fontSize: 15,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Login()),
+                            );
+                          },
+                        ),
+                        TextButton(
+                          child: const Text(
+                            'No',
+                            style: TextStyle(
+                              color: tdBlue,
+                              fontSize: 15,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        )
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+        const Divider(
+          color: tdGrey,
+          thickness: 0.5,
+        ),
+        ListTile(
+          title: Text(
+            'Exit',
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text(
+                    'Are you sure you want to exit?',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  actions: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        TextButton(
+                          child: const Text(
+                            'Yes',
+                            style: TextStyle(
+                              color: tdBlue,
+                              fontSize: 15,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            SystemNavigator.pop();
+                          },
+                        ),
+                        TextButton(
+                          child: const Text(
+                            'No',
+                            style: TextStyle(
+                              color: tdBlue,
+                              fontSize: 15,
+                            ),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
+        const Divider(
+          color: tdGrey,
+          thickness: 0.5,
+        ),
+      ],
+    ),
   );
 }

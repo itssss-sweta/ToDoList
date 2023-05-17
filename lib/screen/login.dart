@@ -1,7 +1,6 @@
 import 'package:application1/constants/colors.dart';
 import 'package:application1/screen/button.dart';
 import 'package:application1/screen/component.dart';
-//import 'package:application1/screen/component.dart';
 import 'package:application1/screen/home.dart';
 import 'package:application1/screen/tiles.dart';
 import 'package:flutter/material.dart';
