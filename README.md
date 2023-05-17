@@ -1,16 +1,12 @@
-# application1
+# To-Do App
 
 A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+This app helps you to add task you plan to do on future. The checkbox feature makes it easier for you to track the completed activites. If necessary, delete button in also available. But you will be redirected to login page at first.
 
-A few resources to get you started if this is your first Flutter project:
+After login, you can add, delete and checkbox tasks as you like as well as search option is availale that filters out the letters from available tasks.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+You get to experience drawer which have functions like logout and exit.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
