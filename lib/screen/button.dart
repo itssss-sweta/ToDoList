@@ -1,4 +1,4 @@
-import 'package:application1/constants/colors.dart';
+import '../constants/colors.dart';
 import 'package:flutter/material.dart';
 
 class Button extends StatelessWidget {

@@ -1,7 +1,7 @@
-import 'package:application1/screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import '../screen/drawer.dart';
+import 'package:intl/intl.dart';
 import '../constants/colors.dart';
 import '../widget/todo_item.dart';
 import '../models/todo.dart';
@@ -18,13 +18,16 @@ class _HomeState extends State<Home> {
   List<ToDo> _foundToDo = [];
   final _todoController = TextEditingController();
 
+  String formattedDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _textFieldValue = "";
   void _showTextField() {
+    _textFieldValue = "";
     showDialog(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
+            backgroundColor: Colors.grey[300],
             shadowColor: Colors.grey[600],
             title: const Text('Add Task'),
             content: Column(
@@ -90,45 +93,79 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.dark,
+    ));
     return Scaffold(
       backgroundColor: tdBGColor,
       appBar: _buildAppBAr(context),
-      drawer: _buildDrawer(context),
-      body: Stack(children: [
-        Container(
-          clipBehavior: Clip.none,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: Column(
-            children: [
-              SearchBox(),
-              Flexible(
-                child: ListView(
-                  scrollDirection: Axis.vertical,
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: 50, bottom: 20),
-                      child: const Text(
-                        'All ToDos',
-                        style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black,
+      drawer: buildDrawer(context),
+      body: Stack(
+        children: [
+          Container(
+            clipBehavior: Clip.none,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+            child: Column(
+              children: [
+                SearchBox(),
+                Flexible(
+                  child: ListView(
+                    scrollDirection: Axis.vertical,
+                    children: [
+                      Container(
+                        margin: const EdgeInsets.only(top: 50, bottom: 20),
+                        child: const Text(
+                          'All ToDos',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
-                    ),
-                    for (ToDo todoo in _foundToDo.reversed)
-                      ToDoItem(
-                        todo: todoo,
-                        onToDoChanged: _handleToDoChange,
-                        onDeleteItem: _deleteToDoItem,
-                      ),
-                  ],
+                      if (_foundToDo.isEmpty)
+                        Center(
+                          child: Container(
+                            padding: const EdgeInsets.only(top: 80),
+                            child: const Text(
+                              'No Search Found',
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      for (ToDo todoo in _foundToDo.reversed) ...[
+                        ToDoItem(
+                          todo: todoo,
+                          onToDoChanged: _handleToDoChange,
+                          onDeleteItem: _deleteToDoItem,
+                        ),
+                      ],
+                    ],
+                  ),
                 ),
-              )
-            ],
+
+                //   (_foundToDo.isEmpty)
+                //       ? Container(
+                //           alignment: Alignment.center,
+                //           child: const Text(
+                //             'No ToDos Found',
+                //             style: TextStyle(
+                //               fontSize: 18,
+                //               fontWeight: FontWeight.w500,
+                //             ),
+                //           ),
+                //         )
+                //
+                //     : _buildToDoListView(),
+              ],
+            ),
           ),
-        ),
-      ]),
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           _showTextField();
@@ -156,12 +193,15 @@ class _HomeState extends State<Home> {
   }
 
   void _addToDoItem(String toDo) {
-    setState(() {
-      todosList.add(ToDo(
-          id: DateTime.now().millisecondsSinceEpoch.toString(),
-          todoText: toDo));
-    });
-    _todoController.clear();
+    if (toDo.isNotEmpty) {
+      setState(() {
+        todosList.add(ToDo(
+            id: DateTime.now().millisecondsSinceEpoch.toString(),
+            todoText: toDo));
+      });
+
+      _todoController.clear();
+    }
   }
 
   void _runFilter(String enteredKeyword) {
@@ -213,204 +253,45 @@ class _HomeState extends State<Home> {
 
 AppBar _buildAppBAr(BuildContext context) {
   return AppBar(
-    backgroundColor: tdBGColor,
+    backgroundColor: const Color.fromARGB(255, 167, 23, 13),
     elevation: 1,
-    leading: Builder(
-      builder: (BuildContext context) {
-        return IconButton(
-          padding: const EdgeInsets.only(left: 20),
-          icon: const Icon(Icons.menu),
-          color: tdBlack,
-          onPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-        );
-      },
+    leading: Padding(
+      padding: const EdgeInsets.only(left: 20),
+      child: Builder(
+        builder: (BuildContext context) {
+          return GestureDetector(
+            onTap: () {
+              Scaffold.of(context).openDrawer();
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.asset(
+                'assets/woman.png',
+                height: 200,
+                width: 20,
+              ),
+            ),
+          );
+        },
+      ),
     ),
     actions: [
+      GestureDetector(
+        child: IconButton(
+          onPressed: () {},
+          icon: const Icon(
+            Icons.search,
+            size: 30,
+          ),
+        ),
+      ),
       IconButton(
         onPressed: () {},
         icon: const Icon(
           Icons.notifications,
           size: 35,
-          color: tdBlack,
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.only(right: 20),
-        child: SizedBox(
-          height: 40,
-          width: 40,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: Image.asset('assets/woman.png'),
-          ),
         ),
       ),
     ],
-  );
-}
-
-Drawer _buildDrawer(BuildContext context) {
-  return Drawer(
-    backgroundColor: tdBGColor,
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        const DrawerHeader(
-          padding: EdgeInsets.only(top: 30, left: 20),
-          decoration: BoxDecoration(
-            color: tdRed,
-          ),
-          child: Text(
-            'To-Do-List',
-            style: TextStyle(
-              fontSize: 32,
-            ),
-          ),
-        ),
-        ListTile(
-          title: const Text(
-            'New Task',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          onTap: () {
-            Navigator.pop(context);
-          },
-        ),
-        const Divider(
-          color: tdGrey,
-          thickness: 0.5,
-        ),
-        ListTile(
-          title: const Text(
-            'Logout',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text(
-                    'Are you sure you want to logout?',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  actions: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        TextButton(
-                          child: const Text(
-                            'Yes',
-                            style: TextStyle(
-                              color: tdBlue,
-                              fontSize: 15,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Login()),
-                            );
-                          },
-                        ),
-                        TextButton(
-                          child: const Text(
-                            'No',
-                            style: TextStyle(
-                              color: tdBlue,
-                              fontSize: 15,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        )
-                      ],
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
-        const Divider(
-          color: tdGrey,
-          thickness: 0.5,
-        ),
-        ListTile(
-          title: Text(
-            'Exit',
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text(
-                    'Are you sure you want to exit?',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                  actions: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        TextButton(
-                          child: const Text(
-                            'Yes',
-                            style: TextStyle(
-                              color: tdBlue,
-                              fontSize: 15,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            SystemNavigator.pop();
-                          },
-                        ),
-                        TextButton(
-                          child: const Text(
-                            'No',
-                            style: TextStyle(
-                              color: tdBlue,
-                              fontSize: 15,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        ),
-        const Divider(
-          color: tdGrey,
-          thickness: 0.5,
-        ),
-      ],
-    ),
   );
 }
